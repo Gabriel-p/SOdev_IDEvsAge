@@ -1,6 +1,4 @@
-# SOdev_IDEvsAge
-
-Simple plot of usage of different IDEs versus developer age based in the SO survey resukts
+These plots show the usage of different IDEs versus developer age based in the SO survey results.
 
 ### 2017
 
