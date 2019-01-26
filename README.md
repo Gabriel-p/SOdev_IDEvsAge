@@ -10,4 +10,5 @@ The original plot for the 2017 survey was posted [here](https://meta.stackoverfl
 
 ### 2018
 
+![alt text](https://github.com/Gabriel-p/SOdev_IDEvsAge/blob/master/SO_2018.png)
 
