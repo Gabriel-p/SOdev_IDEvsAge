@@ -1,27 +1,32 @@
 
+import os
 import numpy as np
 import matplotlib.pyplot as plt
 from itertools import cycle
 import pandas as pd
 
+
+rpath = os.path.dirname(os.path.abspath(__file__))
+year = '2019'
 data = pd.read_csv(
-    "/home/gabriel/Descargas/survey_results_public.csv", low_memory=False)
+    rpath + '/' + year + "/survey_results_public.csv", low_memory=False)
 
 # aa = data[['Age', 'IDE']]
 aa = data[['Age', 'LanguageWorkedWith']]
 bb = aa.dropna()
-
 age = bb['Age']
+
+ages_vals = (18.0, 21.0, 29.5, 39.5, 49.5, 59.5, 65.0)
 ages = []
 for a in age:
-    if a.startswith('Under'):
+    if a < 18.:
         ages.append(18)
-    elif a.endswith('older'):
+    elif a > 65:
         ages.append(65)
     else:
-        ages.append((float(a[:2]) + float(a[5:7])) / 2.)
+        ages.append(ages_vals[np.searchsorted(ages_vals, a)])
+
 ages = np.array(ages)
-ages_vals = (18.0, 21.0, 29.5, 39.5, 49.5, 59.5, 65.0)
 
 # # ydata = bb['IDE']
 # # data_vals = []
@@ -44,32 +49,15 @@ ages_vals = (18.0, 21.0, 29.5, 39.5, 49.5, 59.5, 65.0)
 #     'Light Table': [0, 0, 0, 0, 0, 0, 0]
 # }
 
-# ydata = bb['LanguageWorkedWith']
-# data_vals = []
-# for i in ydata:
-#     data_vals += i.split(';')
-# print(set(data_vals))
-data_dict = {
-    'HTML': [0, 0, 0, 0, 0, 0, 0], 'C++': [0, 0, 0, 0, 0, 0, 0],
-    'Lua': [0, 0, 0, 0, 0, 0, 0], 'Assembly': [0, 0, 0, 0, 0, 0, 0],
-    'Groovy': [0, 0, 0, 0, 0, 0, 0], 'JavaScript': [0, 0, 0, 0, 0, 0, 0],
-    'Objective-C': [0, 0, 0, 0, 0, 0, 0], 'Cobol': [0, 0, 0, 0, 0, 0, 0],
-    'Hack': [0, 0, 0, 0, 0, 0, 0], 'Clojure': [0, 0, 0, 0, 0, 0, 0],
-    'CSS': [0, 0, 0, 0, 0, 0, 0], 'Go': [0, 0, 0, 0, 0, 0, 0],
-    'C': [0, 0, 0, 0, 0, 0, 0], 'Erlang': [0, 0, 0, 0, 0, 0, 0],
-    'R': [0, 0, 0, 0, 0, 0, 0], 'CoffeeScript': [0, 0, 0, 0, 0, 0, 0],
-    'Scala': [0, 0, 0, 0, 0, 0, 0], 'Perl': [0, 0, 0, 0, 0, 0, 0],
-    'Java': [0, 0, 0, 0, 0, 0, 0], 'PHP': [0, 0, 0, 0, 0, 0, 0],
-    'Visual Basic 6': [0, 0, 0, 0, 0, 0, 0], 'C#': [0, 0, 0, 0, 0, 0, 0],
-    'SQL': [0, 0, 0, 0, 0, 0, 0], 'TypeScript': [0, 0, 0, 0, 0, 0, 0],
-    'VBA': [0, 0, 0, 0, 0, 0, 0], 'Python': [0, 0, 0, 0, 0, 0, 0],
-    'Matlab': [0, 0, 0, 0, 0, 0, 0], 'Julia': [0, 0, 0, 0, 0, 0, 0],
-    'Swift': [0, 0, 0, 0, 0, 0, 0], 'Rust': [0, 0, 0, 0, 0, 0, 0],
-    'Haskell': [0, 0, 0, 0, 0, 0, 0], 'F#': [0, 0, 0, 0, 0, 0, 0],
-    'Delphi/Object Pascal': [0, 0, 0, 0, 0, 0, 0],
-    'Bash/Shell': [0, 0, 0, 0, 0, 0, 0], 'Ocaml': [0, 0, 0, 0, 0, 0, 0],
-    'Ruby': [0, 0, 0, 0, 0, 0, 0], 'VB.NET': [0, 0, 0, 0, 0, 0, 0],
-    'Kotlin': [0, 0, 0, 0, 0, 0, 0]}
+ydata = bb['LanguageWorkedWith']
+data_vals = []
+for i in ydata:
+    data_vals += i.split(';')
+print(set(data_vals))
+
+data_dict = {}
+for lang in list(set(data_vals)):
+    data_dict[lang] = [0 for _ in ages_vals]
 
 idx = 0
 for _, row in bb.iterrows():
@@ -115,7 +103,7 @@ fig = plt.figure(figsize=(10, 10))
 #     'Sublime Text', 'Vim', 'Notepad++', 'IPython / Jupyter', 'Atom', 'PyCharm',
 #     'RStudio', 'Visual Studio Code', 'Visual Studio', 'Emacs', 'IntelliJ',
 #     'Eclipse', 'Light Table', 'Komodo')
-plot_ydata = ('Java', 'JavaScript', 'Python', 'C#', 'C')
+plot_ydata = ('Java', 'JavaScript', 'Python', 'C#', 'C', 'Go', 'Other(s):', 'Rust')
 
 lines = ["-", "--", "-.", ":"]
 linecycler = cycle(lines)
@@ -137,8 +125,8 @@ plt.xlabel("Age ranges", fontsize=14)
 plt.ylabel("Usage %", fontsize=14)
 plt.xlim(7, 70)
 
-plt.title("Stack Overflow Developer Survey 2018")
+plt.title("Stack Overflow Developer Survey " + year)
 plt.box(False)
 plt.grid()
 fig.tight_layout()
-plt.savefig('/home/gabriel/Descargas/SO_2018.png', dpi=300)
+plt.savefig('SO_' + year + '.png', dpi=300)
