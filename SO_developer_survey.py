@@ -7,12 +7,20 @@ import pandas as pd
 
 
 rpath = os.path.dirname(os.path.abspath(__file__))
-year = '2019'
+year = '2020'
 data = pd.read_csv(
     rpath + '/' + year + "/survey_results_public.csv", low_memory=False)
 
-# aa = data[['Age', 'IDE']]
-aa = data[['Age', 'LanguageWorkedWith']]
+QUERY = 'DevEnviron'
+plot_ydata = (
+    'Sublime Text', 'Vim', 'Notepad++', 'IPython / Jupyter', 'Atom', 'PyCharm',
+    'RStudio', 'Visual Studio Code', 'Visual Studio', 'Emacs', 'IntelliJ',
+    'Eclipse', 'Light Table', 'Komodo')
+# QUERY = 'LanguageWorkedWith'
+# plot_ydata = ('Java', 'JavaScript', 'Python', 'C#', 'C', 'Go', 'Other(s):', 'Rust')
+
+aa = data[['Age', QUERY]]
+# aa = data[['Age', QUERY]]
 bb = aa.dropna()
 age = bb['Age']
 
@@ -49,7 +57,7 @@ ages = np.array(ages)
 #     'Light Table': [0, 0, 0, 0, 0, 0, 0]
 # }
 
-ydata = bb['LanguageWorkedWith']
+ydata = bb[QUERY]
 data_vals = []
 for i in ydata:
     data_vals += i.split(';')
@@ -61,7 +69,7 @@ for lang in list(set(data_vals)):
 
 idx = 0
 for _, row in bb.iterrows():
-    for y in row['LanguageWorkedWith'].split(';'):  # IDE
+    for y in row[QUERY].split(';'):  # IDE
         data_dict[y][ages_vals.index(ages[idx])] += 1
     idx += 1
 
@@ -99,11 +107,6 @@ for key, vals in data_dict.items():
 
 fig = plt.figure(figsize=(10, 10))
 # plt.style.use('seaborn-darkgrid')
-# plot_ydata = (
-#     'Sublime Text', 'Vim', 'Notepad++', 'IPython / Jupyter', 'Atom', 'PyCharm',
-#     'RStudio', 'Visual Studio Code', 'Visual Studio', 'Emacs', 'IntelliJ',
-#     'Eclipse', 'Light Table', 'Komodo')
-plot_ydata = ('Java', 'JavaScript', 'Python', 'C#', 'C', 'Go', 'Other(s):', 'Rust')
 
 lines = ["-", "--", "-.", ":"]
 linecycler = cycle(lines)
